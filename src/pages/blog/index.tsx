@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useLazyQuery, useSubscription } from "@apollo/client";
 import {
@@ -10,11 +10,17 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { PostModel } from "../../models/post.model";
-import "./Dashboard.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import CreatePostModal from "./components/PostModal";
+import PostItem from "./components/PostItem";
+import "./Blog.scss";
 
-const Dashboard: FC = () => {
+const Blog: FC = () => {
   const [userId, setUserId] = useState<number>(0);
   const [posts, setPosts] = useState<PostModel[]>([]);
+  const [updatePost, setUpdatePost] = useState<PostModel | null>(null);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
   const [listPosts, { data: postData }] = useLazyQuery(LIST_POST, {
@@ -30,6 +36,15 @@ const Dashboard: FC = () => {
   const { data: dataDeletePost } = useSubscription(DELETE_POST_SUBSCRIPTION, {
     variables: { userId },
   });
+  const handleUpdate = (val: PostModel) => {
+    setUpdatePost(val);
+    setModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+    setUpdatePost(null);
+  };
 
   useEffect(() => {
     if (!!user) {
@@ -87,11 +102,36 @@ const Dashboard: FC = () => {
     <div>
       <Grid container justifyContent="center">
         <Grid item xs={12} className="title">
-          <h1>Dashboard</h1>
+          <h1>
+            Blog{" "}
+            <Tooltip title="New post">
+              <FontAwesomeIcon
+                icon={faPlusCircle}
+                onClick={() => setModalOpen(true)}
+              />
+            </Tooltip>
+          </h1>
+        </Grid>
+        <Grid item xs={12} className="post-container" p={4}>
+          {posts.map((item: PostModel) => (
+            <PostItem
+              key={item.id}
+              item={item}
+              handleUpdate={(val: any) => {
+                handleUpdate(val);
+              }}
+              canChange={false}
+            />
+          ))}
         </Grid>
       </Grid>
+      <CreatePostModal
+        item={updatePost}
+        open={modalOpen}
+        handleClose={handleClose}
+      />
     </div>
   );
 };
 
-export default Dashboard;
+export default Blog;

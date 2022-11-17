@@ -1,0 +1,40 @@
+div.post-item {
+  &--container:not(:last-child) {
+    border-bottom: 1px solid gray;
+    margin: 10px;
+  }
+
+  &--title {
+    text-align: left;
+    font-weight: bold;
+
+    & > h3 {
+      margin-left: 10px;
+    }
+  }
+
+  &--text {
+    text-align: left;
+    margin-block-end: 1em;
+
+    & > span {
+      margin-left: 10px;
+    }
+  }
+
+  &--actions {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+
+    & > svg {
+      margin-left: 10px;
+      display: block;
+    }
+  }
+}

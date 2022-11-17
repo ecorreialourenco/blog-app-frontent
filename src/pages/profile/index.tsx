@@ -1,18 +1,30 @@
 import { FC, useEffect, useReducer, useState } from "react";
-import { Grid } from "@mui/material";
-import { useSelector } from "react-redux";
+import {
+  Grid,
+  Button as MButton,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import "./Profile.scss";
 import { User } from "../../models/profile.model";
 import Input from "../../components/form/input/Input";
 import Button from "../../components/button/Button";
+import { useMutation } from "@apollo/client";
+
+import "./Profile.scss";
+import { UPDATE_PROFILE } from "../../queries/profile";
+import { setToken } from "../../helpers/setToken";
 
 const intialState: User = {
+  id: 0,
   username: "",
   email: "",
+  image: "",
 };
 
 const Profile: FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useReducer(
     (state: User, newState: any) => ({ ...state, ...newState }),
     intialState
@@ -23,7 +35,9 @@ const Profile: FC = () => {
   );
   const [canUpdate, setCanUpdate] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
+  const [updateProfile, { data: profileData }] = useMutation(UPDATE_PROFILE);
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setData({ [name]: value });
@@ -34,18 +48,52 @@ const Profile: FC = () => {
     setCanUpdate(false);
   };
 
+  const handeUpdateProfile = () => {
+    setLoading(true);
+    updateProfile({
+      variables: data,
+    });
+    setCanUpdate(false);
+  };
+
+  const handleFileRead = async (event: any) => {
+    const file = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () => {
+      setData({ image: fileReader.result });
+    });
+    fileReader.readAsDataURL(file);
+  };
+
   useEffect(() => {
     if (user) {
-      setData({
-        email: user.email,
-      });
-      setBackupData({
-        email: user.email,
-      });
+      const userData = {
+        id: user.id,
+        username: user.username || "",
+        email: user.email || "",
+        image: user.image || "",
+      };
+      setData(userData);
+      setBackupData(userData);
+      setLoading(false);
     }
   }, []);
 
-  return (
+  useEffect(() => {
+    if (profileData) {
+      setToken({
+        data: profileData.updateProfile,
+        dispatch,
+      });
+      setLoading(false);
+    }
+  }, [profileData]);
+
+  return loading ? (
+    <div className="loading">
+      <CircularProgress />
+    </div>
+  ) : (
     <div>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
@@ -54,7 +102,26 @@ const Profile: FC = () => {
       </Grid>
       <Grid container>
         <Grid item xs={12} md={4}>
-          <h4>Image</h4>
+          <>
+            {data.image ? (
+              <Avatar src={data.image} className="profile-avatar" />
+            ) : (
+              <Avatar className="profile-avatar">
+                <span>No Image</span>
+              </Avatar>
+            )}
+            {canUpdate && (
+              <MButton variant="contained" component="label">
+                Upload
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={handleFileRead}
+                />
+              </MButton>
+            )}
+          </>
         </Grid>
         <Grid item xs={12} md={8}>
           <Grid container className="profile-data-container">
@@ -87,7 +154,7 @@ const Profile: FC = () => {
                     <Grid item className="col col-button">
                       <Button
                         label="Save"
-                        onClick={() => setCanUpdate(!canUpdate)}
+                        onClick={() => handeUpdateProfile()}
                       />
                     </Grid>
                   </>

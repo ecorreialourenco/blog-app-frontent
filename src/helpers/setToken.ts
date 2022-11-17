@@ -1,22 +1,16 @@
+import { User } from "../models/profile.model";
 import { setAuth, setUser } from "../store/slices/auth";
 
 interface TokenParams {
-  id: number;
-  email: string;
+  data: User;
   dispatch: any;
 }
 
 export const setToken = (params: TokenParams) => {
-  const { id, email, dispatch } = params;
+  const { data, dispatch } = params;
 
-  localStorage.setItem(
-    "token",
-    JSON.stringify({
-      id: 1,
-      email,
-    })
-  );
+  localStorage.setItem("token", JSON.stringify(data));
 
   dispatch(setAuth(true));
-  dispatch(setUser({ id, email }));
+  dispatch(setUser(data));
 };

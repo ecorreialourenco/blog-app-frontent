@@ -14,7 +14,9 @@ export const SIGNUP_MUTATION = gql`
       secretPassword: $secretPassword
     ) {
       id
+      username
       email
+      image
     }
   }
 `;

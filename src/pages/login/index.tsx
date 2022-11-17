@@ -35,7 +35,7 @@ const Login: FC = () => {
   useEffect(() => {
     if (!!data && data.login) {
       setError("");
-      setToken({ id: data.login.id, email: data.login.email, dispatch });
+      setToken({ data: data.login, dispatch });
       navigate("/");
     } else if (!!data) {
       setError("Email or password doesn't match");

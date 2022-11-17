@@ -1,4 +1,6 @@
 export interface User {
-  username?: String
+  id: number;
+  username?: String;
   email: string;
+  image?: string;
 }

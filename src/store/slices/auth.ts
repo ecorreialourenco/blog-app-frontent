@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface UserModel {
   id: number;
+  username?: string;
   email: string;
+  image?: string;
 }
 
 interface AuthModel {

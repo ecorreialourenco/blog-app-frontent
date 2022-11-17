@@ -81,11 +81,12 @@ const CreatePostModal: FC<CreateModalProps> = (props) => {
           name="text"
           xs={12}
           value={text}
+          lines={4}
           onChange={(e) => setText(e.target.value)}
         />
         <Grid item xs={4} className="col col-button">
           <Button
-            label="Post"
+            label={id ? "Update" : "Create"}
             onClick={sendPost}
             disabled={!title.length || !text.length}
           />

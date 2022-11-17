@@ -1,13 +1,15 @@
 import { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { Avatar, Menu, MenuItem } from "@mui/material";
+import { Avatar, Menu, MenuItem, Tooltip } from "@mui/material";
 import { setAuth } from "../../store/slices/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
 import "./Header.scss";
 
 const Header: FC = () => {
-  const { auth } = useSelector((state: RootState) => state);
+  const { isAuth, user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -35,9 +37,22 @@ const Header: FC = () => {
         </Link>
       </div>
       <div className="header-right-side">
-        {auth.isAuth ? (
+        {isAuth ? (
           <>
-            <Avatar onClick={handleClickAvatar}>H</Avatar>
+            <Tooltip title="My blog">
+              <FontAwesomeIcon
+                icon={faComments}
+                className="header-icons"
+                onClick={() => handleNavigate("/blog")}
+              />
+            </Tooltip>
+            {user?.image ? (
+              <Avatar src={user.image} onClick={handleClickAvatar} />
+            ) : (
+              <Avatar onClick={handleClickAvatar}>
+                {user?.username ? user.username : "U"}
+              </Avatar>
+            )}
             <Menu
               anchorEl={anchorEl}
               open={openMenu}

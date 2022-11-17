@@ -63,8 +63,7 @@ const Signup: FC = () => {
     if (mutationData && mutationData.signup) {
       setError("");
       setToken({
-        id: mutationData.signup.id,
-        email: mutationData.signup.email,
+        data: mutationData.signup,
         dispatch,
       });
 
