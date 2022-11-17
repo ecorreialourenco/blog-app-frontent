@@ -1,0 +1,18 @@
+@import "../../styles/variables.scss";
+
+button.button {
+  padding: 10px 30px;
+  background-color: $button-background-color;
+  color: $button-text-color;
+
+  &:hover {
+    background-color: $button-background-color-hover;
+    color: $button-text-color-hover;
+  }
+
+  &:disabled {
+    background-color: $button-background-color;
+    color: $button-text-color;
+    opacity: 0.6;
+  }
+}

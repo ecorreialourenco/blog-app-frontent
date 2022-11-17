@@ -1,0 +1,19 @@
+.post-item {
+  &--container {
+    border: 1px solid gray;
+    margin: 10px;
+  }
+
+  &--actions {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    text-align: right;
+    padding-right: 10px;
+
+    & > svg {
+      margin-left: 10px;
+    }
+  }
+}
