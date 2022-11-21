@@ -7,6 +7,12 @@ export const GET_LOGIN = gql`
       username
       email
       image
+      friends {
+        id
+        requestUserId
+        targetUserId
+        status
+      }
     }
   }
 `;

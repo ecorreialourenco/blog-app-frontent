@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Blog from "../pages/blog";
 import Dashboard from "../pages/dashboard";
 import Profile from "../pages/profile";
+import Users from "../pages/users";
 
 const AuthRouter: FC = () => {
   return (
@@ -10,6 +11,7 @@ const AuthRouter: FC = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="profile" element={<Profile />} />
       <Route path="blog" element={<Blog />} />
+      <Route path="users" element={<Users />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

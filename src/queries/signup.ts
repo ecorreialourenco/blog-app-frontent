@@ -17,6 +17,12 @@ export const SIGNUP_MUTATION = gql`
       username
       email
       image
+      friends {
+        id
+        requestUserId
+        targetUserId
+        status
+      }
     }
   }
 `;

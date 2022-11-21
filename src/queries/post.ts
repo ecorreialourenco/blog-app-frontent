@@ -6,6 +6,8 @@ export const LIST_POST = gql`
       id
       title
       text
+      createdAt
+      updatedAt
     }
   }
 `;

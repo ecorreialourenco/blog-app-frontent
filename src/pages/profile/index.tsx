@@ -11,10 +11,9 @@ import { User } from "../../models/profile.model";
 import Input from "../../components/form/input/Input";
 import Button from "../../components/button/Button";
 import { useMutation } from "@apollo/client";
-
-import "./Profile.scss";
 import { UPDATE_PROFILE } from "../../queries/profile";
 import { setToken } from "../../helpers/setToken";
+import "./Profile.scss";
 
 const intialState: User = {
   id: 0,

@@ -1,16 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-interface UserModel {
-  id: number;
-  username?: string;
-  email: string;
-  image?: string;
-}
+import { User } from "../../models/profile.model";
 
 interface AuthModel {
   loading: boolean;
   isAuth: boolean;
-  user: UserModel | null;
+  user: User | null;
   token: string;
   secret: string;
 }

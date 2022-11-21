@@ -1,0 +1,8 @@
+.users-loading {
+    height: calc(100vh - 70px);
+    display: block;
+  
+    & > span {
+      margin-top: 30%;
+    }
+  }

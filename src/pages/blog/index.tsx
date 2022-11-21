@@ -19,6 +19,7 @@ import "./Blog.scss";
 const Blog: FC = () => {
   const [userId, setUserId] = useState<number>(0);
   const [posts, setPosts] = useState<PostModel[]>([]);
+  console.log("🚀 ~ file: index.tsx ~ line 22 ~ posts", posts)
   const [updatePost, setUpdatePost] = useState<PostModel | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.auth);
