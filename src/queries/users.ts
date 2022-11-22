@@ -40,3 +40,39 @@ export const UPDATE_FRIEND = gql`
     }
   }
 `;
+
+export const CREATE_USER_SUBSCRIPTION = gql`
+  subscription userCreated {
+    userCreated {
+      id
+      email
+      username
+      image
+    }
+  }
+`;
+
+export const UPDATE_USER_SUBSCRIPTION = gql`
+  subscription userUpdated {
+    userUpdated {
+      id
+      email
+      username
+      image
+    }
+  }
+`;
+
+export const UPDATE_FRIEND_SUBSCRIPTION = gql`
+  subscription friendsChange($userId: ID!) {
+    friendsChange(userId: $userId) {
+      friend {
+        id
+        requestUserId
+        targetUserId
+        status
+      }
+      action
+    }
+  }
+`;

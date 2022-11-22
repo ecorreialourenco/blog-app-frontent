@@ -1,8 +1,22 @@
 .users-loading {
-    height: calc(100vh - 70px);
-    display: block;
-  
-    & > span {
-      margin-top: 30%;
-    }
+  height: calc(100vh - 70px);
+  display: block;
+
+  & > span {
+    margin-top: 30%;
   }
+}
+
+.users-item-card {
+  max-width: 345px;
+
+  &.users-item-friend {
+    background-color: aquamarine;
+  }
+  &.users-item-block {
+    background-color: rgb(255, 0, 81);
+  }
+  &.users-item-pending {
+    background-color: aqua;
+  }
+}
