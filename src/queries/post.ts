@@ -18,6 +18,8 @@ export const CREATE_POST_SUBSCRIPTION = gql`
       id
       title
       text
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -28,6 +30,8 @@ export const UPDATE_POST_SUBSCRIPTION = gql`
       id
       title
       text
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -37,6 +41,8 @@ export const DELETE_POST_SUBSCRIPTION = gql`
     postDeleted(userId: $userId) {
       id
       userId
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -47,6 +53,8 @@ export const CREATE_POST = gql`
       id
       title
       text
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -57,6 +65,8 @@ export const UPDATE_POST = gql`
       id
       title
       text
+      createdAt
+      updatedAt
     }
   }
 `;

@@ -28,7 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import "./Users.scss";
 import { Status } from "../../enum/status.enum";
-import { setUser } from "../../store/slices/auth";
+import { setToken } from "../../helpers/setToken";
 
 const Users: FC = () => {
   const [list, setList] = useState<User[]>([]);
@@ -189,17 +189,27 @@ const Users: FC = () => {
 
   useEffect(() => {
     // update user friend list
-    const userFriends = user?.friends;
-    const friendsList = list.filter((item: User) => item.friend);
+    if (user) {
+      const userFriends: Friend[] = user.friends!;
+      const friendsList: User[] = list.filter((item: User) => item.friend);
 
-    const updateFriendsList =
-      JSON.stringify(userFriends) !== JSON.stringify(friendsList);
+      const updateFriendsList =
+        JSON.stringify(userFriends) !== JSON.stringify(friendsList);
 
-    if (updateFriendsList && friendsList.length) {
-      const newFriends = friendsList.map((item: User) => item.friend);
-      const updatedUserData = { ...user, friends: newFriends };
+      if (updateFriendsList) {
+        if (friendsList.length) {
+          const newFriends: Friend[] = friendsList.map(
+            (item: User) => item.friend!
+          );
 
-      dispatch(setUser(updatedUserData));
+          const updatedUserData: User = { ...user, friends: newFriends };
+          setToken({ data: updatedUserData, dispatch });
+        } else {
+          // Clear friends list
+          const updatedUserData: User = { ...user, friends: [] };
+          setToken({ data: updatedUserData, dispatch });
+        }
+      }
     }
   }, [list]);
 

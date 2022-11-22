@@ -121,7 +121,7 @@ const Blog: FC = () => {
               handleUpdate={(val: any) => {
                 handleUpdate(val);
               }}
-              canChange={false}
+              canChange={true}
             />
           ))}
         </Grid>

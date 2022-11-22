@@ -18,14 +18,15 @@ import PostHeader from "./PostHeader";
 interface PostItemProps {
   item: PostModel;
   user?: User;
+  me?: boolean;
   handleUpdate: (item: PostModel) => void;
   canChange: boolean;
 }
 
 const PostItem: FC<PostItemProps> = (props) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { item, handleUpdate, canChange } = props;
-  const { id, title, text, createdAt, updatedAt } = item;
+  const { item, handleUpdate, canChange, me } = props;
+  const { id, title, text, createdAt } = item;
   const selfPost = !props.user || user?.id === props.user.id;
   const createdDate = new Date(parseInt(createdAt));
   const updatedDate = new Date(parseInt(createdAt));
@@ -43,6 +44,7 @@ const PostItem: FC<PostItemProps> = (props) => {
       <PostHeader
         canChange={canChange}
         selfPost={selfPost}
+        me={me}
         date={createdDate.toLocaleDateString()}
         title={title}
         username={username}
