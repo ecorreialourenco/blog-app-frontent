@@ -1,5 +1,15 @@
+@import "../../styles/variables.scss";
+
+.users-container {
+  background-color: $page-background-color;
+}
+
+.users-title {
+  height: $page-title-height;
+}
+
 .users-loading {
-  height: calc(100vh - 70px);
+  height: calc(100vh - $header-height);
   display: block;
 
   & > span {
@@ -7,16 +17,12 @@
   }
 }
 
-.users-item-card {
-  max-width: 345px;
+.users-tab-container {
+  margin-bottom: 20px;
+}
 
-  &.users-item-friend {
-    background-color: aquamarine;
-  }
-  &.users-item-block {
-    background-color: rgb(255, 0, 81);
-  }
-  &.users-item-pending {
-    background-color: aqua;
-  }
+.users-list {
+  height: calc(100vh - $header-height - 30px - $page-title-height);
+  overflow: scroll;
+  padding: 10px 20px;
 }

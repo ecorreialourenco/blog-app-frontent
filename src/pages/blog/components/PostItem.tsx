@@ -8,12 +8,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../queries/post";
-
-import "./PostItem.scss";
 import { User } from "../../../models/profile.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import PostHeader from "./PostHeader";
+import "./PostItem.scss";
 
 interface PostItemProps {
   item: PostModel;
@@ -29,7 +28,6 @@ const PostItem: FC<PostItemProps> = (props) => {
   const { id, title, text, createdAt } = item;
   const selfPost = !props.user || user?.id === props.user.id;
   const createdDate = new Date(parseInt(createdAt));
-  const updatedDate = new Date(parseInt(createdAt));
   const username: string =
     props.user && props.user.username ? props.user.username : "";
 
@@ -52,12 +50,17 @@ const PostItem: FC<PostItemProps> = (props) => {
         <Grid item xs={12} md={4} className="post-item--actions">
           <Tooltip title="Edit">
             <FontAwesomeIcon
+              className="post-item--icon"
               icon={faScrewdriverWrench}
               onClick={() => handleUpdate(item)}
             />
           </Tooltip>
           <Tooltip title="Delete">
-            <FontAwesomeIcon icon={faTrashCan} onClick={() => handleDelete()} />
+            <FontAwesomeIcon
+              className="post-item--icon"
+              icon={faTrashCan}
+              onClick={() => handleDelete()}
+            />
           </Tooltip>
         </Grid>
       </PostHeader>

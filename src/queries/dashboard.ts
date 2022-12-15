@@ -1,18 +1,21 @@
 import { gql } from "@apollo/client";
 
 export const LIST_FRIENDS_POSTS = gql`
-  query listFriendsPosts($userId: ID!) {
-    listFriendsPosts(userId: $userId) {
-      id
-      title
-      text
-      user {
+  query listFriendsPosts($userId: ID!, $page: Int) {
+    listFriendsPosts(userId: $userId, page: $page) {
+      posts {
         id
-        email
-        username
+        title
+        text
+        user {
+          id
+          email
+          username
+        }
+        createdAt
+        updatedAt
       }
-      createdAt
-      updatedAt
+      totalPages
     }
   }
 `;

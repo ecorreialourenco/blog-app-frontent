@@ -1,4 +1,4 @@
-import { Grid, Tooltip } from "@mui/material";
+import { CircularProgress, Grid, Tooltip } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useLazyQuery, useSubscription } from "@apollo/client";
 import {
@@ -14,18 +14,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import CreatePostModal from "./components/PostModal";
 import PostItem from "./components/PostItem";
+import Pagination from "../../components/form/Pagination";
 import "./Blog.scss";
 
 const Blog: FC = () => {
   const [userId, setUserId] = useState<number>(0);
   const [posts, setPosts] = useState<PostModel[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   const [updatePost, setUpdatePost] = useState<PostModel | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const [listPosts, { data: postData }] = useLazyQuery(LIST_POST, {
-    variables: { userId },
-  });
+  const [listPosts, { loading, data: postData }] = useLazyQuery(LIST_POST);
 
   const { data: dataCreatePost } = useSubscription(CREATE_POST_SUBSCRIPTION, {
     variables: { userId },
@@ -47,6 +48,11 @@ const Blog: FC = () => {
     setUpdatePost(null);
   };
 
+  const handleChangePage = (newPage: number) => {
+    user && listPosts({ variables: { userId, page: newPage } });
+    setPage(newPage);
+  };
+
   useEffect(() => {
     if (!!user) {
       setUserId(user.id);
@@ -54,20 +60,28 @@ const Blog: FC = () => {
   }, [user]);
 
   useEffect(() => {
-    !!userId && listPosts({ variables: { userId } });
+    !!userId && listPosts({ variables: { userId, page } });
   }, [userId]);
 
   useEffect(() => {
-    if (postData) {
-      setPosts(postData.listPosts);
+    if (postData && postData.listPosts) {
+      const { posts: userPosts, totalPages } = postData.listPosts;
+      setPosts(userPosts);
+      setTotal(totalPages);
     }
   }, [postData]);
 
   useEffect(() => {
-    if (dataCreatePost) {
+    if (dataCreatePost && page === 0) {
+      const { post: newUserPost, totalPages } = dataCreatePost.postCreated;
       const newPost: PostModel[] = [];
-      newPost.push(dataCreatePost.postCreated);
+      newPost.push(newUserPost);
       newPost.push(...posts);
+
+      if (totalPages > total) {
+        newPost.pop();
+        setTotal(totalPages);
+      }
 
       setPosts(newPost);
     }
@@ -75,14 +89,18 @@ const Blog: FC = () => {
 
   useEffect(() => {
     if (dataUpdatePost) {
-      const index = posts.findIndex(
-        (item: PostModel) => item.id === dataUpdatePost.postUpdated.id
-      );
-      const updatedPosts = [...posts];
-      updatedPosts[index].title = dataUpdatePost.postUpdated.title;
-      updatedPosts[index].text = dataUpdatePost.postUpdated.text;
+      const { post: updatedUserPost } = dataUpdatePost.postUpdated;
 
-      setPosts(updatedPosts);
+      const index = posts.findIndex(
+        (item: PostModel) => item.id === updatedUserPost.id
+      );
+      if (index !== -1) {
+        const updatedPosts = [...posts];
+        updatedPosts[index].title = updatedUserPost.title;
+        updatedPosts[index].text = updatedUserPost.text;
+
+        setPosts(updatedPosts);
+      }
     }
   }, [dataUpdatePost]);
 
@@ -91,40 +109,54 @@ const Blog: FC = () => {
       const index = posts.findIndex(
         (item: PostModel) => item.id === dataDeletePost.postDeleted.id
       );
-      const updatedPosts = [...posts];
 
-      updatedPosts.splice(index, 1);
+      if (index !== -1) {
+        const updatedPosts = [...posts];
+        updatedPosts.splice(index, 1);
 
-      setPosts(updatedPosts);
+        setPosts(updatedPosts);
+      }
+
+      dataDeletePost.totalPages < total && setTotal(dataDeletePost.totalPages);
     }
   }, [dataDeletePost]);
 
   return (
     <div>
-      <Grid container justifyContent="center">
+      <Grid container justifyContent="center" className="blog-container">
         <Grid item xs={12} className="title">
           <h1>
             Blog{" "}
             <Tooltip title="New post">
               <FontAwesomeIcon
+                className="blog-icon"
                 icon={faPlusCircle}
                 onClick={() => setModalOpen(true)}
               />
             </Tooltip>
           </h1>
         </Grid>
-        <Grid item xs={12} className="post-container" p={4}>
-          {posts.map((item: PostModel) => (
-            <PostItem
-              key={item.id}
-              item={item}
-              handleUpdate={(val: any) => {
-                handleUpdate(val);
-              }}
-              canChange={true}
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Grid item xs={12} className="blog-list" p={4}>
+            {posts.map((item: PostModel) => (
+              <PostItem
+                key={item.id}
+                item={item}
+                handleUpdate={(val: any) => {
+                  handleUpdate(val);
+                }}
+                canChange={true}
+              />
+            ))}
+            <Pagination
+              total={total}
+              page={page}
+              handleChangePage={handleChangePage}
             />
-          ))}
-        </Grid>
+          </Grid>
+        )}
       </Grid>
       <CreatePostModal
         item={updatePost}

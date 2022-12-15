@@ -1,37 +1,49 @@
 import { FC, useEffect, useState } from "react";
-import { Grid } from "@mui/material";
-import { useLazyQuery, useSubscription } from "@apollo/client";
-
-import "./Dashboard.scss";
+import { CircularProgress, Grid } from "@mui/material";
+import { useLazyQuery /* , useSubscription */ } from "@apollo/client";
 import { LIST_FRIENDS_POSTS } from "../../queries/dashboard";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { PostModel } from "../../models/post.model";
 import PostItem from "../blog/components/PostItem";
+import Pagination from "../../components/form/Pagination";
+import "./Dashboard.scss";
 
 const Dashboard: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [list, setList] = useState<PostModel[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
+
   const [listPosts, { loading, data }] = useLazyQuery(LIST_FRIENDS_POSTS);
 
+  const handleChangePage = (newPage: number) => {
+    user && listPosts({ variables: { userId: user.id, page: newPage } });
+    setPage(newPage);
+  };
+
   useEffect(() => {
-    listPosts({ variables: { userId: user?.id } });
+    listPosts({ variables: { userId: user?.id, page } });
   }, []);
 
   useEffect(() => {
     if (data && data.listFriendsPosts) {
-      setList(data.listFriendsPosts);
+      const { posts, totalPages } = data.listFriendsPosts;
+      setList(posts);
+      setTotal(totalPages);
     }
   }, [data]);
 
   return (
-    <div>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} className="title">
-          <h1>Dashboard</h1>
-        </Grid>
+    <Grid container justifyContent="center" className="dashboard-container">
+      <Grid item xs={12} className="title">
+        <h1>Dashboard</h1>
+      </Grid>
 
-        <Grid item xs={12} className="post-container" p={4}>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Grid item xs={12} className="dashboard--posts-list" p={4}>
           {list.map((item: PostModel) => (
             <PostItem
               key={item.id}
@@ -42,9 +54,14 @@ const Dashboard: FC = () => {
               canChange={false}
             />
           ))}
+          <Pagination
+            total={total}
+            page={page}
+            handleChangePage={handleChangePage}
+          />
         </Grid>
-      </Grid>
-    </div>
+      )}
+    </Grid>
   );
 };
 

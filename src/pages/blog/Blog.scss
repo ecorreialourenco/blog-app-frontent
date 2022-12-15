@@ -1,5 +1,17 @@
+@import "../../styles/variables.scss";
 
-.post-container {
-  max-height: 75vh;
+.blog-container {
+  background-color: $page-background-color;
+  height: calc(100vh - $header-height - 30px);
+}
+
+div.blog-list {
   overflow: scroll;
+  height: calc(100vh - $header-height - 30px - $page-title-height);
+  padding: 0;
+  margin: 0 32px;
+}
+
+.blog-icon {
+  cursor: pointer;
 }

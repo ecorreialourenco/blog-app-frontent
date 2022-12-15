@@ -1,0 +1,20 @@
+div.users-item-card {
+  max-width: 345px;
+  border-radius: 25px;
+
+  &.users-item-friend {
+    background-color: aquamarine;
+  }
+  &.users-item-block {
+    background-color: rgb(255, 0, 81);
+  }
+  &.users-item-pending {
+    background-color: aqua;
+  }
+}
+
+.users-item-actions {
+  display: flex;
+  margin: 5px;
+  justify-content: space-around;
+}

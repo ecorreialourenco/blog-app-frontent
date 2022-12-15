@@ -1,7 +1,11 @@
 div.post-item {
-  &--container:not(:last-child) {
-    border-bottom: 1px solid gray;
-    margin: 10px;
+  &--container {
+    padding: 10px 30px;
+    margin-bottom: 20px;
+
+    border: 1px solid gray;
+    border-radius: 30px;
+    background-color: white;
   }
 
   &--title {
@@ -37,4 +41,8 @@ div.post-item {
       display: block;
     }
   }
+}
+
+.post-item--icon {
+  cursor: pointer;
 }

@@ -1,13 +1,16 @@
 import { gql } from "@apollo/client";
 
 export const LIST_POST = gql`
-  query listPosts($userId: ID!) {
-    listPosts(userId: $userId) {
-      id
-      title
-      text
-      createdAt
-      updatedAt
+  query listPosts($userId: ID!, $page: Int) {
+    listPosts(userId: $userId, page: $page) {
+      posts {
+        id
+        title
+        text
+        createdAt
+        updatedAt
+      }
+      totalPages
     }
   }
 `;
@@ -15,11 +18,14 @@ export const LIST_POST = gql`
 export const CREATE_POST_SUBSCRIPTION = gql`
   subscription postCreated($userId: ID!) {
     postCreated(userId: $userId) {
-      id
-      title
-      text
-      createdAt
-      updatedAt
+      post {
+        id
+        title
+        text
+        createdAt
+        updatedAt
+      }
+      totalPages
     }
   }
 `;
@@ -27,11 +33,14 @@ export const CREATE_POST_SUBSCRIPTION = gql`
 export const UPDATE_POST_SUBSCRIPTION = gql`
   subscription postUpdate($userId: ID!) {
     postUpdate(userId: $userId) {
-      id
-      title
-      text
-      createdAt
-      updatedAt
+      post {
+        id
+        title
+        text
+        createdAt
+        updatedAt
+      }
+      totalPages
     }
   }
 `;
@@ -41,8 +50,7 @@ export const DELETE_POST_SUBSCRIPTION = gql`
     postDeleted(userId: $userId) {
       id
       userId
-      createdAt
-      updatedAt
+      totalPages
     }
   }
 `;

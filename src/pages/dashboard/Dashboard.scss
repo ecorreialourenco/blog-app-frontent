@@ -1,4 +1,13 @@
-.post-container {
-  max-height: 75vh;
+@import "../../styles/variables.scss";
+
+.dashboard-container {
+  background-color: $page-background-color;
+  height: calc(100vh - $header-height);
+}
+
+div.dashboard--posts-list {
+  height: calc(100vh - $header-height - 90px - $page-title-height);
   overflow: scroll;
+  padding: 0;
+  margin: 32px;
 }

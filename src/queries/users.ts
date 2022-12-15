@@ -11,18 +11,104 @@ export const STATUS_ENUM = gql`
 `;
 
 export const LIST_USERS = gql`
-  query listUsers($excludeId: ID!) {
-    listUsers(excludeId: $excludeId) {
-      id
-      username
-      email
-      image
-      friend(id: $excludeId) {
+  query listUsers($excludeId: ID!, $page: Int!, $search: String) {
+    listUsers(excludeId: $excludeId, page: $page, search: $search) {
+      users {
         id
-        requestUserId
-        targetUserId
-        status
+        username
+        email
+        image
+        friend(id: $excludeId) {
+          id
+          requestUserId
+          targetUserId
+          status
+          block
+        }
       }
+      totalPages
+    }
+  }
+`;
+
+export const LIST_FRIENDS = gql`
+  query listFriends(
+    $excludeId: ID!
+    $page: Int!
+    $statusIn: [Status]
+    $statusNotIn: [Status]
+    $search: String
+  ) {
+    listFriends(
+      filters: {
+        excludeId: $excludeId
+        page: $page
+        statusIn: $statusIn
+        statusNotIn: $statusNotIn
+        search: $search
+      }
+    ) {
+      users {
+        id
+        username
+        email
+        image
+        friend(id: $excludeId) {
+          id
+          requestUserId
+          targetUserId
+          status
+          block
+        }
+      }
+      totalPages
+    }
+  }
+`;
+
+export const LIST_REQUESTS = gql`
+  query listRequests(
+    $userId: ID!
+    $page: Int!
+    $search: String
+    $own: Boolean
+  ) {
+    listRequests(userId: $userId, page: $page, search: $search, own: $own) {
+      users {
+        id
+        username
+        email
+        image
+        friend(id: $userId) {
+          id
+          requestUserId
+          targetUserId
+          status
+          block
+        }
+      }
+      totalPages
+    }
+  }
+`;
+
+export const LIST_BLOCKED_USERS = gql`
+  query listBlockedUsers($excludeId: ID!, $page: Int!, $search: String) {
+    listBlockedUsers(excludeId: $excludeId, page: $page, search: $search) {
+      users {
+        id
+        username
+        email
+        image
+        friend(id: $excludeId) {
+          id
+          requestUserId
+          targetUserId
+          status
+          block
+        }
+      }
+      totalPages
     }
   }
 `;
@@ -44,10 +130,13 @@ export const UPDATE_FRIEND = gql`
 export const CREATE_USER_SUBSCRIPTION = gql`
   subscription userCreated {
     userCreated {
-      id
-      email
-      username
-      image
+      user {
+        id
+        email
+        username
+        image
+      }
+      totalPages
     }
   }
 `;
@@ -55,10 +144,13 @@ export const CREATE_USER_SUBSCRIPTION = gql`
 export const UPDATE_USER_SUBSCRIPTION = gql`
   subscription userUpdated {
     userUpdated {
-      id
-      email
-      username
-      image
+      user {
+        id
+        email
+        username
+        image
+      }
+      totalPages
     }
   }
 `;

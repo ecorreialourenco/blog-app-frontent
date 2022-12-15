@@ -1,5 +1,6 @@
 import { Grid } from "@mui/material";
 import { FC } from "react";
+import "./PostHeader.scss";
 
 interface PostHeaderProps {
   canChange: boolean;
@@ -13,20 +14,18 @@ interface PostHeaderProps {
 
 const PostHeader: FC<PostHeaderProps> = (props) => {
   const { canChange, me, selfPost, username, title, date, children } = props;
+  const postOrigin =
+    me && selfPost
+      ? `Me - ${date}`
+      : !selfPost
+      ? `${username} - ${date}`
+      : date;
 
   return (
     <>
       <Grid item xs={12} md={canChange ? 8 : 12} className="post-header">
-        <h3>{title}</h3>
-        {me && selfPost ? (
-          <span>Me - {date}</span>
-        ) : !selfPost ? (
-          <span>
-            {username} - {date}
-          </span>
-        ) : (
-          <span>{date}</span>
-        )}
+        <span className="post-header-title">{title}</span>
+        <span className="post-header-origin">{postOrigin}</span>
       </Grid>
       {canChange && children}
     </>

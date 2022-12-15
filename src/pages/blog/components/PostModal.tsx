@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Dialog, DialogTitle, Grid, Modal } from "@mui/material";
+import { Dialog, DialogTitle, Grid } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Button from "../../../components/button/Button";
@@ -7,6 +7,7 @@ import Input from "../../../components/form/input/Input";
 import { PostModel } from "../../../models/post.model";
 import { CREATE_POST, UPDATE_POST } from "../../../queries/post";
 import { RootState } from "../../../store/store";
+import "./PostModal.scss";
 
 interface CreateModalProps {
   item?: PostModel | null;
