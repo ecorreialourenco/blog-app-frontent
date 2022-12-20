@@ -10,10 +10,23 @@ interface PostHeaderProps {
   title: string;
   date: string;
   children?: React.ReactNode;
+  withLink?: boolean;
+  userId?: number;
 }
 
 const PostHeader: FC<PostHeaderProps> = (props) => {
-  const { canChange, me, selfPost, username, title, date, children } = props;
+  const {
+    canChange,
+    me,
+    selfPost,
+    username,
+    title,
+    date,
+    withLink,
+    userId,
+    children,
+  } = props;
+
   const postOrigin =
     me && selfPost
       ? `Me - ${date}`
@@ -25,7 +38,13 @@ const PostHeader: FC<PostHeaderProps> = (props) => {
     <>
       <Grid item xs={12} md={canChange ? 8 : 12} className="post-header">
         <span className="post-header-title">{title}</span>
-        <span className="post-header-origin">{postOrigin}</span>
+        <span className="post-header-origin">
+          {withLink ? (
+            <a href={`/posts/${userId}`}>{postOrigin}</a>
+          ) : (
+            postOrigin
+          )}
+        </span>
       </Grid>
       {canChange && children}
     </>

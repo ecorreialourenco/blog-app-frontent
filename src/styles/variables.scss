@@ -1,18 +1,2 @@
-$red: #d7263d;
-$blue: #02182b;
-$blue2: #0197f6;
-$blue3: #448fa3;
-$blue4: #68c5db;
-
-$header-background-color: $blue;
-$header-text-color: $blue4;
-$header-text-hover-color: $blue3;
-$header-height: 40px;
-
-$button-background-color: $blue;
-$button-text-color: $blue4;
-$button-background-color-hover: $blue2;
-$button-text-color-hover: $blue;
-
-$page-background-color: aliceblue;
-$page-title-height: 90px;
+@import "./colors.scss";
+@import "./sizes.scss";

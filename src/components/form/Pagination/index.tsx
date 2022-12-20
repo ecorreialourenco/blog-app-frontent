@@ -12,7 +12,7 @@ const Pagination: FC<PaginationProps> = (props) => {
   const { total, page, handleChangePage } = props;
 
   return (
-    <Grid item xs={12} className="pagination-container">
+    <Grid item xs={12} className="pagination pagination-container">
       {total > 1 && (
         <MPagination
           count={total}

@@ -19,7 +19,14 @@ const Search: FC<SearchProps> = (props) => {
     debouncedSearch(e.target.value);
   };
 
-  return <TextField label={label} variant="outlined" onChange={handleChange} />;
+  return (
+    <TextField
+      label={label}
+      variant="outlined"
+      className="search"
+      onChange={handleChange}
+    />
+  );
 };
 
 export default Search;

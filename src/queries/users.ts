@@ -10,9 +10,27 @@ export const STATUS_ENUM = gql`
   }
 `;
 
+export const GET_USER = gql`
+  query getUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      username
+      email
+      image
+      friend(id: $id) {
+        id
+        requestUserId
+        targetUserId
+        status
+        block
+      }
+    }
+  }
+`;
+
 export const LIST_USERS = gql`
   query listUsers($excludeId: ID!, $page: Int!, $search: String) {
-    listUsers(excludeId: $excludeId, page: $page, search: $search) {
+    listUsers(page: $page, search: $search) {
       users {
         id
         username
@@ -41,7 +59,6 @@ export const LIST_FRIENDS = gql`
   ) {
     listFriends(
       filters: {
-        excludeId: $excludeId
         page: $page
         statusIn: $statusIn
         statusNotIn: $statusNotIn
@@ -73,7 +90,9 @@ export const LIST_REQUESTS = gql`
     $search: String
     $own: Boolean
   ) {
-    listRequests(userId: $userId, page: $page, search: $search, own: $own) {
+    listRequests(
+      filters: { userId: $userId, page: $page, search: $search, own: $own }
+    ) {
       users {
         id
         username
@@ -94,7 +113,7 @@ export const LIST_REQUESTS = gql`
 
 export const LIST_BLOCKED_USERS = gql`
   query listBlockedUsers($excludeId: ID!, $page: Int!, $search: String) {
-    listBlockedUsers(excludeId: $excludeId, page: $page, search: $search) {
+    listBlockedUsers(page: $page, search: $search) {
       users {
         id
         username
@@ -120,8 +139,8 @@ export const ADD_FRIEND = gql`
 `;
 
 export const UPDATE_FRIEND = gql`
-  mutation updateFriend($id: ID!, $status: Status!) {
-    updateFriend(id: $id, status: $status) {
+  mutation updateFriend($id: ID!, $status: Status!, $block: Boolean) {
+    updateFriend(id: $id, status: $status, block: $block) {
       id
     }
   }

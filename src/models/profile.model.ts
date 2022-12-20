@@ -14,4 +14,5 @@ export interface Friend {
   requestUserId: number;
   targetUserId: number;
   status: Status;
+  block?:boolean
 }

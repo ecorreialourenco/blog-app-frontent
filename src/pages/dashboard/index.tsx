@@ -24,6 +24,7 @@ const Dashboard: FC = () => {
 
   useEffect(() => {
     listPosts({ variables: { userId: user?.id, page } });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const Dashboard: FC = () => {
       setList(posts);
       setTotal(totalPages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
@@ -43,23 +45,38 @@ const Dashboard: FC = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        <Grid item xs={12} className="dashboard--posts-list" p={4}>
-          {list.map((item: PostModel) => (
-            <PostItem
-              key={item.id}
-              item={item}
-              me={true}
-              user={item.user}
-              handleUpdate={() => {}}
-              canChange={false}
+        <>
+          <Grid
+            item
+            xs={12}
+            className="dashboard-container dashboard-container--list"
+            p={4}
+          >
+            {list.map((item: PostModel) => (
+              <PostItem
+                key={item.id}
+                item={item}
+                me={true}
+                user={item.user}
+                handleUpdate={() => {}}
+                canChange={false}
+                withLink={true}
+              />
+            ))}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            className="dashboard-container dashboard-container--pagination"
+            p={4}
+          >
+            <Pagination
+              total={total}
+              page={page}
+              handleChangePage={handleChangePage}
             />
-          ))}
-          <Pagination
-            total={total}
-            page={page}
-            handleChangePage={handleChangePage}
-          />
-        </Grid>
+          </Grid>
+        </>
       )}
     </Grid>
   );

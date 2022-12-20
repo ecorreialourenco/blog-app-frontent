@@ -4,13 +4,12 @@ import {
   LIST_REQUESTS,
   UPDATE_FRIEND_SUBSCRIPTION,
 } from "../../../../queries/users";
-import { Friend, User } from "../../../../models/profile.model";
-import { useDispatch, useSelector } from "react-redux";
+import { User } from "../../../../models/profile.model";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { setToken } from "../../../../helpers/setToken";
 import List from "../common/List";
+import { UserRequestQueryVariables } from "../../../../models/user.model";
 import "./RequestList.scss";
-import { UserRequestQueryVariables } from "../../../../models/queries.model";
 
 interface RequestListProps {
   isOwn: boolean;
@@ -23,7 +22,6 @@ const RequestList: FC<RequestListProps> = (props) => {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
-  const dispatch = useDispatch();
 
   const [listRequests, { data }] = useLazyQuery(LIST_REQUESTS);
 
@@ -70,33 +68,6 @@ const RequestList: FC<RequestListProps> = (props) => {
   }, [data]);
 
   useEffect(() => {
-    // update user friend list
-    if (user) {
-      const userFriends: Friend[] = user.friends!;
-      const friendsList: User[] = list.filter((item: User) => item.friend);
-
-      const updateFriendsList =
-        JSON.stringify(userFriends) !== JSON.stringify(friendsList);
-
-      if (updateFriendsList) {
-        if (friendsList.length) {
-          const newFriends: Friend[] = friendsList.map(
-            (item: User) => item.friend!
-          );
-
-          const updatedUserData: User = { ...user, friends: newFriends };
-          setToken({ data: updatedUserData, dispatch });
-        } else {
-          // Clear friends list
-          const updatedUserData: User = { ...user, friends: [] };
-          setToken({ data: updatedUserData, dispatch });
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list]);
-
-  useEffect(() => {
     if (dataFriendChanged && dataFriendChanged.friendsChange && !!user) {
       const { friend, action } = dataFriendChanged.friendsChange;
 
@@ -116,6 +87,7 @@ const RequestList: FC<RequestListProps> = (props) => {
         updateList(page, search);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataFriendChanged]);
 
   return (

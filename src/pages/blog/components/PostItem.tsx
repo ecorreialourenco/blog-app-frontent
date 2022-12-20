@@ -20,11 +20,12 @@ interface PostItemProps {
   me?: boolean;
   handleUpdate: (item: PostModel) => void;
   canChange: boolean;
+  withLink?: boolean;
 }
 
 const PostItem: FC<PostItemProps> = (props) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { item, handleUpdate, canChange, me } = props;
+  const { item, handleUpdate, canChange, withLink, me } = props;
   const { id, title, text, createdAt } = item;
   const selfPost = !props.user || user?.id === props.user.id;
   const createdDate = new Date(parseInt(createdAt));
@@ -46,6 +47,8 @@ const PostItem: FC<PostItemProps> = (props) => {
         date={createdDate.toLocaleDateString()}
         title={title}
         username={username}
+        withLink={withLink}
+        userId={!!props.user ? props.user.id : user?.id}
       >
         <Grid item xs={12} md={4} className="post-item--actions">
           <Tooltip title="Edit">

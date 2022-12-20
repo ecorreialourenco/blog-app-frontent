@@ -7,6 +7,7 @@ import {
   DELETE_POST_SUBSCRIPTION,
   LIST_POST,
 } from "../../queries/post";
+import { GET_USER } from "../../queries/users";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { PostModel } from "../../models/post.model";
@@ -15,6 +16,7 @@ import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import CreatePostModal from "./components/PostModal";
 import PostItem from "./components/PostItem";
 import Pagination from "../../components/form/Pagination";
+import { useParams } from "react-router-dom";
 import "./Blog.scss";
 
 const Blog: FC = () => {
@@ -25,8 +27,11 @@ const Blog: FC = () => {
   const [updatePost, setUpdatePost] = useState<PostModel | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.auth);
+  const params = useParams();
 
   const [listPosts, { loading, data: postData }] = useLazyQuery(LIST_POST);
+  const [getUser, { loading: userLoading, data: userData }] =
+    useLazyQuery(GET_USER);
 
   const { data: dataCreatePost } = useSubscription(CREATE_POST_SUBSCRIPTION, {
     variables: { userId },
@@ -48,8 +53,16 @@ const Blog: FC = () => {
     setUpdatePost(null);
   };
 
+  const getListPosts = (newPage?: number) => {
+    const newRequestPage = newPage || page;
+    const userPostId = params.id || userId;
+
+    user &&
+      listPosts({ variables: { userId: userPostId, page: newRequestPage } });
+  };
+
   const handleChangePage = (newPage: number) => {
-    user && listPosts({ variables: { userId, page: newPage } });
+    getListPosts(newPage);
     setPage(newPage);
   };
 
@@ -60,8 +73,16 @@ const Blog: FC = () => {
   }, [user]);
 
   useEffect(() => {
-    !!userId && listPosts({ variables: { userId, page } });
+    getListPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
+
+  useEffect(() => {
+    if (params.id) {
+      getUser({ variables: { id: params.id } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   useEffect(() => {
     if (postData && postData.listPosts) {
@@ -69,6 +90,7 @@ const Blog: FC = () => {
       setPosts(userPosts);
       setTotal(totalPages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postData]);
 
   useEffect(() => {
@@ -85,6 +107,7 @@ const Blog: FC = () => {
 
       setPosts(newPost);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataCreatePost]);
 
   useEffect(() => {
@@ -102,6 +125,7 @@ const Blog: FC = () => {
         setPosts(updatedPosts);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataUpdatePost]);
 
   useEffect(() => {
@@ -119,43 +143,58 @@ const Blog: FC = () => {
 
       dataDeletePost.totalPages < total && setTotal(dataDeletePost.totalPages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataDeletePost]);
 
   return (
     <div>
-      <Grid container justifyContent="center" className="blog-container">
+      <Grid container justifyContent="center" className="blog blog--container">
         <Grid item xs={12} className="title">
-          <h1>
-            Blog{" "}
-            <Tooltip title="New post">
-              <FontAwesomeIcon
-                className="blog-icon"
-                icon={faPlusCircle}
-                onClick={() => setModalOpen(true)}
-              />
-            </Tooltip>
-          </h1>
+          {!params.id ? (
+            // Only update if it's your own blog
+            <h1>
+              Blog
+              <Tooltip title="New post">
+                <FontAwesomeIcon
+                  className="blog blog--icon"
+                  icon={faPlusCircle}
+                  onClick={() => setModalOpen(true)}
+                />
+              </Tooltip>
+            </h1>
+          ) : (
+            <h1>
+              {!!userData &&
+                userData.getUser &&
+                `${userData.getUser.username} - `}
+              Posts
+            </h1>
+          )}
         </Grid>
-        {loading ? (
+        {loading || userLoading ? (
           <CircularProgress />
         ) : (
-          <Grid item xs={12} className="blog-list" p={4}>
-            {posts.map((item: PostModel) => (
-              <PostItem
-                key={item.id}
-                item={item}
-                handleUpdate={(val: any) => {
-                  handleUpdate(val);
-                }}
-                canChange={true}
+          <>
+            <Grid item xs={12} className="blog blog--list" p={4}>
+              {posts.map((item: PostModel) => (
+                <PostItem
+                  key={item.id}
+                  item={item}
+                  handleUpdate={(val: any) => {
+                    handleUpdate(val);
+                  }}
+                  canChange={!params.id}
+                />
+              ))}
+            </Grid>
+            <Grid item xs={12} className="blog blog--pagination" p={4}>
+              <Pagination
+                total={total}
+                page={page}
+                handleChangePage={handleChangePage}
               />
-            ))}
-            <Pagination
-              total={total}
-              page={page}
-              handleChangePage={handleChangePage}
-            />
-          </Grid>
+            </Grid>
+          </>
         )}
       </Grid>
       <CreatePostModal

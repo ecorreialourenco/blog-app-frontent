@@ -3,6 +3,9 @@ import {
   faUserCheck,
   faUserPlus,
   faUserSlash,
+  faUserLock,
+  faUnlock,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,6 +13,7 @@ import {
   CardActions,
   CardHeader,
   CardMedia,
+  CircularProgress,
   Grid,
   Tooltip,
 } from "@mui/material";
@@ -19,6 +23,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND, UPDATE_FRIEND } from "../../../../queries/users";
+import { useNavigate } from "react-router-dom";
 import "./UserItem.scss";
 
 interface UserItemProps {
@@ -31,9 +36,11 @@ const UserItem: FC<UserItemProps> = (props) => {
   const { item } = props;
   const { user } = useSelector((state: RootState) => state.auth);
   const { id, username, email, image, friend } = item;
+  const navigate = useNavigate();
 
-  const [addFriend] = useMutation(ADD_FRIEND);
-  const [updateFriend] = useMutation(UPDATE_FRIEND);
+  const [addFriend, { loading: loadingAddingFriend }] = useMutation(ADD_FRIEND);
+  const [updateFriend, { loading: loadingUpdatingFriend }] =
+    useMutation(UPDATE_FRIEND);
 
   const handleAddFriend = (targetId: number) => {
     addFriend({
@@ -44,12 +51,12 @@ const UserItem: FC<UserItemProps> = (props) => {
     });
   };
 
-  const handleUpdateFriend = (id: number, status: Status) => {
-    updateFriend({ variables: { id, status } });
+  const handleUpdateFriend = (id: number, status: Status, block: boolean) => {
+    updateFriend({ variables: { id, status, block } });
   };
 
   const renderOptions = (args: Friend) => {
-    const { id, targetUserId, status } = args;
+    const { id, targetUserId, status, block } = args;
     switch (status) {
       case Status.PENDING:
         if (targetUserId === user?.id) {
@@ -59,19 +66,19 @@ const UserItem: FC<UserItemProps> = (props) => {
               <Tooltip title="Acept friend">
                 <FontAwesomeIcon
                   icon={faUserCheck}
-                  onClick={() => handleUpdateFriend(id, Status.ACEPT)}
+                  onClick={() => handleUpdateFriend(id, Status.ACEPT, false)}
                 />
               </Tooltip>
               <Tooltip title="Reject friend">
                 <FontAwesomeIcon
                   icon={faUserSlash}
-                  onClick={() => handleUpdateFriend(id, Status.DENIED)}
+                  onClick={() => handleUpdateFriend(id, Status.NONE, false)}
                 />
               </Tooltip>
               <Tooltip title="Block user">
                 <FontAwesomeIcon
-                  icon={faUserSlash}
-                  onClick={() => handleUpdateFriend(id, Status.DENIED)}
+                  icon={faUserLock}
+                  onClick={() => handleUpdateFriend(id, Status.DENIED, true)}
                 />
               </Tooltip>
             </>
@@ -82,7 +89,7 @@ const UserItem: FC<UserItemProps> = (props) => {
             <Tooltip title="Cancel request">
               <FontAwesomeIcon
                 icon={faUserSlash}
-                onClick={() => handleUpdateFriend(id, Status.NONE)}
+                onClick={() => handleUpdateFriend(id, Status.NONE, false)}
               />
             </Tooltip>
           );
@@ -95,10 +102,29 @@ const UserItem: FC<UserItemProps> = (props) => {
             <Tooltip title="Remove friend">
               <FontAwesomeIcon
                 icon={faUserSlash}
-                onClick={() => handleUpdateFriend(id, Status.NONE)}
+                onClick={() => handleUpdateFriend(id, Status.NONE, false)}
+              />
+            </Tooltip>
+            <Tooltip title="Friend's post">
+              <FontAwesomeIcon
+                icon={faComments}
+                onClick={() => navigate(`/posts/${id}`)}
               />
             </Tooltip>
           </>
+        );
+
+      case Status.DENIED:
+        // Remove block status
+        return (
+          block === true && (
+            <Tooltip title="Unblock user">
+              <FontAwesomeIcon
+                icon={faUnlock}
+                onClick={() => handleUpdateFriend(id, Status.NONE, false)}
+              />
+            </Tooltip>
+          )
         );
 
       default:
@@ -114,7 +140,9 @@ const UserItem: FC<UserItemProps> = (props) => {
     }
   };
 
-  return (
+  return loadingAddingFriend || loadingUpdatingFriend ? (
+    <CircularProgress />
+  ) : (
     <Grid item xs={12} sm={6} md={4} lg={2} key={id}>
       <Card className={`users-item-card `}>
         <CardHeader title={username || email} />

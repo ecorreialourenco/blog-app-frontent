@@ -1,0 +1,11 @@
+$header-height: 40px;
+
+$page-title-height: 90px;
+
+$tabs-height: 72px;
+$search-height: 87px;
+$pagination-height: 35px;
+
+$page-height: calc(100vh - $header-height - 30px - $page-title-height);
+$normal-page-height: calc($page-height - $pagination-height);
+$users-list-height: calc($normal-page-height - $tabs-height - $search-height);

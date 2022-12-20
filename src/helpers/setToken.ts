@@ -1,16 +1,23 @@
 import { User } from "../models/profile.model";
-import { setAuth, setUser } from "../store/slices/auth";
+import {
+  setAuth,
+  setUser,
+  setToken as setUserToken,
+} from "../store/slices/auth";
+import { decodeToken } from "react-jwt";
 
 interface TokenParams {
-  data: User;
+  data: string;
   dispatch: any;
 }
 
 export const setToken = (params: TokenParams) => {
   const { data, dispatch } = params;
+  const decoded: any = decodeToken(data);
+  const user: User = decoded.user;
 
-  localStorage.setItem("token", JSON.stringify(data));
-
+  dispatch(setUser(user));
+  dispatch(setUserToken(data));
+  localStorage.setItem("token", data);
   dispatch(setAuth(true));
-  dispatch(setUser(data));
 };

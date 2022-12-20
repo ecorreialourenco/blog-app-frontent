@@ -3,11 +3,15 @@
 .dashboard-container {
   background-color: $page-background-color;
   height: calc(100vh - $header-height);
+  overflow: hidden;
 }
 
-div.dashboard--posts-list {
-  height: calc(100vh - $header-height - 90px - $page-title-height);
-  overflow: scroll;
+.dashboard-container.dashboard-container--list {
+  height: $normal-page-height;
+  overflow: auto;
+  margin-top: 0;
+}
+
+.dashboard-container.dashboard-container--pagination {
   padding: 0;
-  margin: 32px;
 }

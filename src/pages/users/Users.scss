@@ -22,7 +22,7 @@
 }
 
 .users-list {
-  height: calc(100vh - $header-height - 30px - $page-title-height);
-  overflow: scroll;
+  height: $page-height;
+  overflow: hidden;
   padding: 10px 20px;
 }

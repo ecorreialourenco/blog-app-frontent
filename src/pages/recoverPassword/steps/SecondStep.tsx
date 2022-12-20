@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Grid } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
 import InputPassword from "../../../components/form/InputPassword";
 import Button from "../../../components/button/Button";
 import { StepProps } from "../../../models/steps.model";
@@ -18,7 +18,7 @@ const SecondStep: FC<StepProps> = (props) => {
   const [submitForm, setSubmitForm] = useState<boolean>(false);
   const { token, secret } = useSelector((state: RootState) => state.auth);
 
-  const [recover, { data }] = useMutation(CHANGE_PASSWORD);
+  const [recover, { loading, data }] = useMutation(CHANGE_PASSWORD);
 
   const handleSubmit = () => {
     if (password === password2) {
@@ -51,7 +51,9 @@ const SecondStep: FC<StepProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  return (
+  return loading ? (
+    <CircularProgress />
+  ) : (
     <div>
       <span>{secret}</span>
       <Input

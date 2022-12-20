@@ -5,7 +5,11 @@ import { Avatar, Badge, Menu, MenuItem, Tooltip } from "@mui/material";
 import { setAuth } from "../../store/slices/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserGroup, faComments } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserGroup,
+  faComments,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { useLazyQuery, useSubscription } from "@apollo/client";
 import { GET_REQUESTS_COUNT } from "../../queries/layout";
 import { UPDATE_FRIEND_SUBSCRIPTION } from "../../queries/users";
@@ -33,6 +37,8 @@ const Header: FC = () => {
   };
 
   const handleNavigate = (location: string) => {
+    // Close menu if it's open
+    openMenu && setOpenMenu(false);
     navigate(location);
   };
 
@@ -45,12 +51,14 @@ const Header: FC = () => {
     if (data && data.listRequests) {
       setFriendsRequest(data.listRequests.totalRecords);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
     if (user) {
       getCount({ variables: { userId: user.id }, fetchPolicy: "network-only" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, dataFriendChanged]);
 
   return useMemo(
@@ -88,7 +96,7 @@ const Header: FC = () => {
                 <Avatar src={user.image} onClick={handleClickAvatar} />
               ) : (
                 <Avatar onClick={handleClickAvatar}>
-                  {user?.username ? user.username : "U"}
+                  <FontAwesomeIcon icon={faUser} />
                 </Avatar>
               )}
               <Menu
@@ -117,8 +125,9 @@ const Header: FC = () => {
           )}
         </div>
       </header>
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     ),
-    [openMenu, friendsRequest]
+    [openMenu, friendsRequest, isAuth]
   );
 };
 

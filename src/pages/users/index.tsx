@@ -48,23 +48,21 @@ const Users: FC = () => {
         <h1>Users</h1>
       </Grid>
       <Grid item xs={12} className="users-list">
-        <>
-          <Grid
-            container
-            justifyContent="center"
-            spacing={2}
-            className="users-tab-container"
-          >
-            <Tabs value={currentTab} onChange={handleChangeTab}>
-              <Tab icon={<Diversity3Icon />} label="Friends" />
-              <Tab icon={<GroupAddIcon />} label="Aprovals" />
-              <Tab icon={<GroupAddIcon />} label="Requests" />
-              <Tab icon={<GroupsIcon />} label="Users" />
-              <Tab icon={<PersonOffIcon />} label="Blocked Users" />
-            </Tabs>
-          </Grid>
-          {renderComponents()}
-        </>
+        <Grid
+          container
+          justifyContent="center"
+          spacing={2}
+          className="users-tab-container"
+        >
+          <Tabs value={currentTab} onChange={handleChangeTab}>
+            <Tab icon={<Diversity3Icon />} label="Friends" />
+            <Tab icon={<GroupAddIcon />} label="Aprovals" />
+            <Tab icon={<GroupAddIcon />} label="Requests" />
+            <Tab icon={<GroupsIcon />} label="Users" />
+            <Tab icon={<PersonOffIcon />} label="Blocked Users" />
+          </Tabs>
+        </Grid>
+        {renderComponents()}
       </Grid>
     </Grid>
   );

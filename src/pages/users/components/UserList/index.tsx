@@ -6,10 +6,9 @@ import {
   UPDATE_FRIEND_SUBSCRIPTION,
   UPDATE_USER_SUBSCRIPTION,
 } from "../../../../queries/users";
-import { Friend, User } from "../../../../models/profile.model";
-import { useDispatch, useSelector } from "react-redux";
+import { User } from "../../../../models/profile.model";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { setToken } from "../../../../helpers/setToken";
 import List from "../common/List";
 import "./UserList.scss";
 
@@ -19,7 +18,6 @@ const UserList: FC = () => {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
-  const dispatch = useDispatch();
 
   const [listUsers, { data }] = useLazyQuery(LIST_USERS);
 
@@ -69,36 +67,10 @@ const UserList: FC = () => {
   }, [data]);
 
   useEffect(() => {
-    // update user friend list
-    if (user) {
-      const userFriends: Friend[] = user.friends!;
-      const friendsList: User[] = list.filter((item: User) => item.friend);
-
-      const updateFriendsList =
-        JSON.stringify(userFriends) !== JSON.stringify(friendsList);
-
-      if (updateFriendsList) {
-        if (friendsList.length) {
-          const newFriends: Friend[] = friendsList.map(
-            (item: User) => item.friend!
-          );
-
-          const updatedUserData: User = { ...user, friends: newFriends };
-          setToken({ data: updatedUserData, dispatch });
-        } else {
-          // Clear friends list
-          const updatedUserData: User = { ...user, friends: [] };
-          setToken({ data: updatedUserData, dispatch });
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list]);
-
-  useEffect(() => {
     // New user registered
     // Get updated list
     !!dataUserCreated && updateList(page, search);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataUserCreated]);
 
   useEffect(() => {
@@ -115,13 +87,15 @@ const UserList: FC = () => {
         setList(updatedFriend);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataUserUpdated]);
 
   useEffect(() => {
     if (dataFriendChanged && dataFriendChanged.friendsChange && !!user) {
       const { friend, action } = dataFriendChanged.friendsChange;
       const { requestUserId, targetUserId } = friend;
-      const friendId = requestUserId !== user.id ? requestUserId : targetUserId;
+      const friendId =
+        parseInt(requestUserId) !== user.id ? requestUserId : targetUserId;
 
       setList(
         list.map((item) => {
@@ -130,10 +104,12 @@ const UserList: FC = () => {
           } else if (item.id === friendId) {
             return { ...item, friend: null };
           }
+
           return item;
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataFriendChanged]);
 
   return (
@@ -143,6 +119,7 @@ const UserList: FC = () => {
       currentPage={page}
       handleChangePage={handleChangePage}
       handleChangeSearch={handleChangeSearch}
+      //update={() => updateList(page, search)}
     />
   );
 };

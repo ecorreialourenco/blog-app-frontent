@@ -11,6 +11,7 @@ const AuthRouter: FC = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="profile" element={<Profile />} />
       <Route path="blog" element={<Blog />} />
+      <Route path="posts/:id" element={<Blog />} />
       <Route path="users" element={<Users />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

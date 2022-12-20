@@ -36,7 +36,8 @@ const Profile: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
-  const [updateProfile, { data: profileData }] = useMutation(UPDATE_PROFILE);
+  const [updateProfile, { loading: loadingProfile, data: profileData }] =
+    useMutation(UPDATE_PROFILE);
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setData({ [name]: value });
@@ -76,6 +77,7 @@ const Profile: FC = () => {
       setBackupData(userData);
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -86,9 +88,10 @@ const Profile: FC = () => {
       });
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData]);
 
-  return loading ? (
+  return loading || loadingProfile ? (
     <div className="loading">
       <CircularProgress />
     </div>

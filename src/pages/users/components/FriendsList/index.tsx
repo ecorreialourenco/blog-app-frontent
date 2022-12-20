@@ -4,13 +4,12 @@ import {
   LIST_FRIENDS,
   UPDATE_FRIEND_SUBSCRIPTION,
 } from "../../../../queries/users";
-import { Friend, User } from "../../../../models/profile.model";
-import { useDispatch, useSelector } from "react-redux";
+import { User } from "../../../../models/profile.model";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { setToken } from "../../../../helpers/setToken";
 import List from "../common/List";
 import { Status } from "../../../../enum/status.enum";
-import { UserQueryVariables } from "../../../../models/queries.model";
+import { UserQueryVariables } from "../../../../models/user.model";
 import "./FriendsList.scss";
 
 interface FriendsListProps {
@@ -24,7 +23,6 @@ const FriendsList: FC<FriendsListProps> = (props) => {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
-  const dispatch = useDispatch();
 
   const [listFriends, { data }] = useLazyQuery(LIST_FRIENDS);
 
@@ -34,7 +32,7 @@ const FriendsList: FC<FriendsListProps> = (props) => {
       variables: { userId: user?.id },
     }
   );
-  
+
   const updateList = (currentPage: number, searchString: string) => {
     let variables: UserQueryVariables = {
       excludeId: user ? user.id : 0,
@@ -71,33 +69,6 @@ const FriendsList: FC<FriendsListProps> = (props) => {
   }, [data]);
 
   useEffect(() => {
-    // update user friend list
-    if (user) {
-      const userFriends: Friend[] = user.friends!;
-      const friendsList: User[] = list.filter((item: User) => item.friend);
-
-      const updateFriendsList =
-        JSON.stringify(userFriends) !== JSON.stringify(friendsList);
-
-      if (updateFriendsList) {
-        if (friendsList.length) {
-          const newFriends: Friend[] = friendsList.map(
-            (item: User) => item.friend!
-          );
-
-          const updatedUserData: User = { ...user, friends: newFriends };
-          setToken({ data: updatedUserData, dispatch });
-        } else {
-          // Clear friends list
-          const updatedUserData: User = { ...user, friends: [] };
-          setToken({ data: updatedUserData, dispatch });
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list]);
-
-  useEffect(() => {
     if (dataFriendChanged && dataFriendChanged.friendsChange && !!user) {
       const { friend, action } = dataFriendChanged.friendsChange;
 
@@ -119,6 +90,7 @@ const FriendsList: FC<FriendsListProps> = (props) => {
         updateList(page, search);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataFriendChanged]);
 
   return (
